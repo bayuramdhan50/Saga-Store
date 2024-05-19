@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar - Saga Store</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div th:replace="header :: header"></div>
+
+<main>
+    <section class="signup">
+        <div class="container">
+            <h2 class="section-title">Daftar</h2>
+            <div class="row">
+                <div class="col-md-6 offset-md-3">
+                    <form th:action="@{/pengguna/signup}" method="post" th:object="${pengguna}">
+                        <div class="form-group">
+                            <label for="username">Username:</label>
+                            <input type="text" class="form-control" id="username" name="username"
+                                   th:field="*{username}" required>
+                            <span th:if="${#fields.hasErrors('username')}" class="text-danger">
+                                    <span th:errors="*{username}"></span>
+                                </span>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input type="password" class="form-control" id="password" name="password"
+                                   th:field="*{password}" required>
+                            <span th:if="${#fields.hasErrors('password')}" class="text-danger">
+                                    <span th:errors="*{password}"></span>
+                                </span>
+                        </div>
+                        <div class="form-group">
+                            <label for="alamat">Alamat:</label>
+                            <input type="text" class="form-control" id="alamat" name="alamat"
+                                   th:field="*{alamat}" required>
+                            <span th:if="${#fields.hasErrors('alamat')}" class="text-danger">
+                                    <span th:errors="*{alamat}"></span>
+                                </span>
+                        </div>
+                        <div class="form-group">
+                            <label for="nomorTelepon">Nomor Telepon:</label>
+                            <input type="text" class="form-control" id="nomorTelepon" name="nomorTelepon"
+                                   th:field="*{nomorTelepon}" required>
+                            <span th:if="${#fields.hasErrors('nomorTelepon')}" class="text-danger">
+                                    <span th:errors="*{nomorTelepon}"></span>
+                                </span>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Daftar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div th:replace="footer :: footer"></div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

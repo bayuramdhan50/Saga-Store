@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saga Store</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div th:replace="header :: header"></div>
+
+<main>
+    <section class="hero">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Selamat Datang di Toko Online Kami!</h1>
+                    <p>Temukan berbagai produk berkualitas dengan harga terbaik.</p>
+                    <a th:href="@{/produk}" class="btn btn-primary">Jelajahi Produk</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="featured-products">
+        <div class="container">
+            <h2 class="section-title">Produk Pilihan</h2>
+            <div class="row">
+                <!-- Contoh produk -->
+                <div class="col-md-4 mb-4" th:each="produk : ${featuredProducts}">
+                    <div class="card">
+                        <img th:src="@{/images/{namaGambar}(namaGambar=${produk.namaGambar})}" class="card-img-top" alt="Produk 1">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${produk.nama}"></h5>
+                            <p class="card-text" th:text="${produk.deskripsi}"> </p>
+                            <a th:href="@{/produk/detail/{id}(id=${produk.id})}" class="btn btn-primary">Detail</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div th:replace="footer :: footer"></div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
