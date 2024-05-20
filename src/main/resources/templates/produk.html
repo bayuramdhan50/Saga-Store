@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -40,9 +40,9 @@
             </ul>
 
             <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
-                <li><a class="nav-link" href="#"><img src="images/user.svg"></a></li>
-                <li><a class="nav-link" href="cart.html"><img src="images/cart.svg"></a></li>
-            </ul>
+                <li><a class="nav-link" th:href="@{/signup}"><img th:src="@{/images/user.svg}"></a></li>
+                <li><a class="nav-link" th:href="@{/keranjang}"><img th:src="@{/images/cart.svg}"></a></li>
+                </ul>
         </div>
     </div>
 
