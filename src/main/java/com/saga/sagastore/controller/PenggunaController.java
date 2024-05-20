@@ -17,6 +17,7 @@ public class PenggunaController {
 
     @GetMapping("/login")
     public String login(Model model) {
+        model.addAttribute("pageTitle", "Login");
         model.addAttribute("pengguna", new Pengguna());
         model.addAttribute("active", "login");
         return "login";
@@ -48,6 +49,7 @@ public class PenggunaController {
 
     @GetMapping("/signup")
     public String signup(Model model) {
+        model.addAttribute("pageTitle", "Signup");
         model.addAttribute("pengguna", new Pengguna());
         model.addAttribute("active", "signup");
         return "signup";

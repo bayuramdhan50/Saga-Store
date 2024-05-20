@@ -36,6 +36,8 @@ public class ProdukController {
             e.printStackTrace();
             // Handle error (misalnya, redirect ke halaman error)
         }
+
+        model.addAttribute("pageTitle", "Produk");
         model.addAttribute("produkList", produkList);
         model.addAttribute("active", "products");
         return "produk";

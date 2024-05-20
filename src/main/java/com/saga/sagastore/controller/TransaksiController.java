@@ -7,16 +7,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.sql.*;
-
 @Controller
 @RequestMapping("/")
-public class KeranjangController {
-
-    @GetMapping("/keranjang")
-    public String keranjang(Model model) {
-        model.addAttribute("pageTitle", "Keranjang");
-        model.addAttribute("active", "keranjang");
-        return "keranjang";
+public class TransaksiController {
+    @GetMapping("/transaksi")
+    public String transaksi(Model model) {
+//        model.addAttribute("transaksi", new Transaksi());
+        return "transaksi";
     }
 }
