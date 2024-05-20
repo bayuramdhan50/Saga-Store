@@ -1,14 +1,52 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Saga Store</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Untree.co">
+    <link th:href="@{/favicon.png}" rel="shortcut icon">
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap4" />
+
+    <!-- Bootstrap CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css}" rel="stylesheet">
+    <link th:href="@{/css/tiny-slider.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <title>Signup - Saga Store</title>
 </head>
+
 <body>
-<div th:replace="header :: header"></div>
+
+<!-- Start Header/Navigation -->
+<nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" aria-label="Furni navigation bar">
+
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">Saga Store<span>.</span></a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsFurni">
+            <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/}">Home</a>
+                </li>
+                <li><a class="nav-link" th:href="@{/produk}">Shop</a></li>
+                <li><a class="nav-link" th:href="@{/about}">About us</a></li>
+                <li><a class="nav-link" th:href="@{/services}">Services</a></li>
+            </ul>
+
+            <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+                <li><a class="nav-link" th:href="@{/signup}"><img th:src="@{/images/user.svg}"></a></li>
+                <li><a class="nav-link" th:href="@{/keranjang}"><img th:src="@{/images/cart.svg}"></a></li>
+            </ul>
+        </div>
+    </div>
+
+</nav>
 
 <main>
     <section class="login">
@@ -16,7 +54,7 @@
             <h2 class="section-title">Login</h2>
             <div class="row">
                 <div class="col-md-6 offset-md-3">
-                    <form th:action="@{/pengguna/login}" method="post">
+                    <form th:action="@{/login}" method="post">
                         <div class="form-group">
                             <label for="username">Username:</label>
                             <input type="text" class="form-control" id="username" name="username"
@@ -28,7 +66,7 @@
                                    th:field="*{password}" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Login</button>
-                        <p>Belum punya akun? <a th:href="@{/pengguna/signup}">Daftar sekarang</a></p>
+                        <p>Belum punya akun? <a th:href="@{/signup}">Daftar sekarang</a></p>
                     </form>
                 </div>
             </div>
@@ -36,10 +74,15 @@
     </section>
 </main>
 
-<div th:replace="footer :: footer"></div>
+<footer class="footer">
+    <div class="container">
+        <p class="text-center">Copyright © 2024 Saga Store</p>
+    </div>
+</footer>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/tiny-slider.js}"></script>
+<script th:src="@{/js/custom.js}"></script>
 </body>
 </html>
