@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class TransaksiController {
     @GetMapping("/transaksi")
     public String transaksi(Model model) {
+        model.addAttribute("pageTitle", "Transaksi");
+        model.addAttribute("activePage", "transaksi");
 //        model.addAttribute("transaksi", new Transaksi());
         return "transaksi";
     }

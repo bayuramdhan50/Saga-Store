@@ -1,22 +1,11 @@
 package com.saga.sagastore.model;
 
-import jakarta.persistence.*;
-
 import java.util.List;
 
-@Entity
-@Table(name = "keranjang")
 public class Keranjang {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "pengguna_id")
     private Pengguna pengguna;
-
-    @OneToMany(mappedBy = "keranjang", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemKeranjang> itemKeranjangs;
 
     public Keranjang(Long id, Pengguna pengguna, List<ItemKeranjang> itemKeranjangs) {
@@ -49,3 +38,4 @@ public class Keranjang {
         this.itemKeranjangs = itemKeranjangs;
     }
 }
+

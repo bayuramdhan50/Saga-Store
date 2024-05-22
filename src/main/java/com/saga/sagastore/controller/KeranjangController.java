@@ -16,7 +16,7 @@ public class KeranjangController {
     @GetMapping("/keranjang")
     public String keranjang(Model model) {
         model.addAttribute("pageTitle", "Keranjang");
-        model.addAttribute("active", "keranjang");
+        model.addAttribute("activePage", "keranjang");
         return "keranjang";
     }
 }

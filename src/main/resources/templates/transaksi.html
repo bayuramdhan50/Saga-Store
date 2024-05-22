@@ -1,60 +1,10 @@
-<!-- /*
-* Bootstrap 5
-* Template Name: Furni
-* Template Author: Untree.co
-* Template URI: https://untree.co/
-* License: https://creativecommons.org/licenses/by/3.0/
-*/ -->
 <!doctype html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="author" content="Untree.co">
-  <link rel="shortcut icon" href="favicon.png">
-
-  <meta name="description" content="" />
-  <meta name="keywords" content="bootstrap, bootstrap4" />
-
-		<!-- Bootstrap CSS -->
-		<link href="css/bootstrap.min.css" rel="stylesheet">
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-		<link href="css/tiny-slider.css" rel="stylesheet">
-		<link href="css/style.css" rel="stylesheet">
-		<title>transaksi</title>
-	</head>
+<head th:replace="/fragments/head :: head"></head>
 
 	<body>
 
-		<!-- Start Header/Navigation -->
-		<nav class="custom-navbar navbar navbar navbar-expand-md navbar-dark bg-dark" arial-label="Furni navigation bar">
-
-			<div class="container">
-				<a class="navbar-brand" href="/">Saga Store<span>.</span></a>
-
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-
-				<div class="collapse navbar-collapse" id="navbarsFurni">
-					<ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
-						<li class="nav-item ">
-							<a class="nav-link" href="/">Home</a>
-						</li>
-						<li><a class="nav-link" href="/produk">Shop</a></li>
-						<li><a class="nav-link" href="/about">About us</a></li>
-						<li><a class="nav-link" href="/services">Services</a></li>
-					</ul>
-
-					<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
-						<li><a class="nav-link" th:href="@{/signup}"><img th:src="@{/images/user.svg}"></a></li>
-						<li><a class="nav-link" th:href="@{/keranjang}"><img th:src="@{/images/cart.svg}"></a></li>
-					</ul>
-				</div>
-			</div>
-				
-		</nav>
-		<!-- End Header/Navigation -->
+	<div th:include="/fragments/header :: header"></div>
 
 		<!-- Start Hero Section -->
 			<div class="hero">
@@ -171,18 +121,12 @@
 		    </div>
 		  </div>
 
-		<!-- Start Footer Section -->
-		<footer class="footer">
-			<div class="container">
-				<p class="text-center">Copyright © 2024 Saga Store</p>
-			</div>
-		</footer>
-		<!-- End Footer Section -->	
+		<div th:include="/fragments/footer :: footer"></div>
 
-
-		<script src="js/bootstrap.bundle.min.js"></script>
-		<script src="js/tiny-slider.js"></script>
-		<script src="js/custom.js"></script>
+		<script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js}"></script>
+		<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+		<script th:src="@{/js/tiny-slider.js}"></script>
+		<script th:src="@{/js/custom.js}"></script>
 	</body>
 
 </html>

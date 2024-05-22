@@ -1,24 +1,10 @@
 package com.saga.sagastore.model;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "item_keranjang")
 public class ItemKeranjang {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "keranjang_id")
     private Keranjang keranjang;
-
-    @ManyToOne
-    @JoinColumn(name = "produk_id")
     private Produk produk;
-
-    @Column(nullable = false)
     private int jumlah;
 
     public ItemKeranjang(Long id, Keranjang keranjang, Produk produk, int jumlah) {

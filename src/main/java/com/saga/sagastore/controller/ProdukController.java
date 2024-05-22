@@ -39,7 +39,7 @@ public class ProdukController {
 
         model.addAttribute("pageTitle", "Produk");
         model.addAttribute("produkList", produkList);
-        model.addAttribute("active", "products");
+        model.addAttribute("activePage", "products");
         return "produk";
     }
 

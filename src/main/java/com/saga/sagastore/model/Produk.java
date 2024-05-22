@@ -1,32 +1,17 @@
 package com.saga.sagastore.model;
 
-import jakarta.persistence.*;
-@Entity
-@Table(name = "produk")
 public class Produk {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
     private String nama;
-
-    @Column(columnDefinition = "TEXT")
     private String deskripsi;
-
-    @Column(nullable = false)
     private double harga;
-
-    @Column(nullable = false)
     private int stok;
-
-    @Column(nullable = false)
     private String namaGambar;
 
     public Produk() {
-
     }
+
     public Produk(Long id, String nama, String deskripsi, double harga, int stok, String namaGambar) {
         this.id = id;
         this.nama = nama;
@@ -84,3 +69,4 @@ public class Produk {
         this.namaGambar = namaGambar;
     }
 }
+

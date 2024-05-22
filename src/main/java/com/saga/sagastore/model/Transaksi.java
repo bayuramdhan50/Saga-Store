@@ -1,32 +1,15 @@
 package com.saga.sagastore.model;
 
-import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
-@Table(name = "transaksi")
 public class Transaksi {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "pengguna_id")
     private Pengguna pengguna;
-
-    @Column(nullable = false)
     private LocalDateTime tanggalTransaksi;
-
-    @Column(nullable = false)
     private double totalHarga;
-
-    @Column(nullable = false)
     private String metodePembayaran;
-
-    @OneToMany(mappedBy = "transaksi", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemTransaksi> itemTransaksis;
 
     public Transaksi(Long id, Pengguna pengguna, LocalDateTime tanggalTransaksi, double totalHarga, String metodePembayaran, List<ItemTransaksi> itemTransaksis) {
