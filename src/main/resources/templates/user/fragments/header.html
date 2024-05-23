@@ -1,0 +1,44 @@
+<!-- Start Header/Navigation -->
+<header>
+<nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" aria-label="Furni navigation bar">
+
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">Saga Store<span>.</span></a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsFurni">
+            <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+                <li class="nav-item" th:classappend="${activePage == 'home'} ? 'active' : ''">
+                    <a class="nav-link" th:href="@{/user/home}">Home</a>
+                </li>
+                <li class="nav-item" th:classappend="${activePage == 'products'} ? 'active' : ''">
+                    <a class="nav-link" th:href="@{/user/produk}">Shop</a>
+                </li>
+                <li class="nav-item" th:classappend="${activePage == 'about'} ? 'active' : ''">
+                    <a class="nav-link" th:href="@{/user/about}">About us</a>
+                </li>
+                <li class="nav-item" th:classappend="${activePage == 'services'} ? 'active' : ''">
+                    <a class="nav-link" th:href="@{/user/services}">Services</a>
+                </li>
+            </ul>
+
+            <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img th:src="@{/images/user.svg}">
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" th:href="@{/user/profile}">Profile</a></li>
+                        <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
+                    </ul>
+                </li>
+                <li><a class="nav-link" th:href="@{/user/keranjang}"><img th:src="@{/images/cart.svg}"></a></li>
+            </ul>
+        </div>
+    </div>
+
+</nav>
+</header>
