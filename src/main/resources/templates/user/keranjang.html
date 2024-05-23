@@ -23,8 +23,6 @@
 </div>
 <!-- End Hero Section -->
 
-
-
 <div class="untree_co-section before-footer-section">
     <div class="container">
         <div class="row mb-5">
@@ -44,7 +42,7 @@
                         <tbody>
                         <tr>
                             <td class="product-thumbnail">
-                                <img src="images/product-1.png" alt="Image" class="img-fluid">
+                                <img th:src="@{/images/product-1.png}" alt="Image" class="img-fluid">
                             </td>
                             <td class="product-name">
                                 <h2 class="h5 text-black">Product 1</h2>
@@ -60,7 +58,6 @@
                                         <button class="btn btn-outline-black increase" type="button">&plus;</button>
                                     </div>
                                 </div>
-
                             </td>
                             <td>$49.00</td>
                             <td><a href="#" class="btn btn-black btn-sm">X</a></td>
@@ -68,7 +65,7 @@
 
                         <tr>
                             <td class="product-thumbnail">
-                                <img src="images/product-2.png" alt="Image" class="img-fluid">
+                                <img th:src="@{/images/product-2.png}" alt="Image" class="img-fluid">
                             </td>
                             <td class="product-name">
                                 <h2 class="h5 text-black">Product 2</h2>
@@ -84,7 +81,6 @@
                                         <button class="btn btn-outline-black increase" type="button">&plus;</button>
                                     </div>
                                 </div>
-
                             </td>
                             <td>$49.00</td>
                             <td><a href="#" class="btn btn-black btn-sm">X</a></td>
@@ -143,7 +139,6 @@
     </div>
 </div>
 
-
 <div th:include="/user/fragments/footer :: footer"></div>
 
 <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js}"></script>
@@ -151,5 +146,4 @@
 <script th:src="@{/js/tiny-slider.js}"></script>
 <script th:src="@{/js/custom.js}"></script>
 </body>
-
 </html>
