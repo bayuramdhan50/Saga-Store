@@ -113,8 +113,32 @@
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2" th:text="'Selamat datang di Dashboard, ' + ${pengguna.getUsername()} + '!'"></h1>
+                <h1 class="h2">Add Produk</h1>
             </div>
+
+            <form th:action="@{/admin/produk/add}" method="post" th:object="${produk}">
+                <div class="mb-3">
+                    <label for="nama" class="form-label">Nama Produk</label>
+                    <input type="text" th:field="*{nama}" class="form-control" id="nama">
+                </div>
+                <div class="mb-3">
+                    <label for="deskripsi" class="form-label">Deskripsi</label>
+                    <input type="text" th:field="*{deskripsi}" class="form-control" id="deskripsi">
+                </div>
+                <div class="mb-3">
+                    <label for="harga" class="form-label">Harga</label>
+                    <input type="number" th:field="*{harga}" class="form-control" id="harga">
+                </div>
+                <div class="mb-3">
+                    <label for="stok" class="form-label">Stok</label>
+                    <input type="number" th:field="*{stok}" class="form-control" id="stok">
+                </div>
+                <div class="input-group mb-3">
+                    <label class="input-group-text" for="inputGambar">Upload</label>
+                    <input type="file" class="form-control" id="inputGambar">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
         </main>
     </div>
 </div>
