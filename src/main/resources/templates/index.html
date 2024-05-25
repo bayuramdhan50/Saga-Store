@@ -42,14 +42,10 @@
 
             <!-- Start Column 2 -->
             <div th:each="produk, iterStat : ${produkList}" class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0" th:if="${iterStat.index lt 3}">
-                <a class="product-item" th:href="@{/cart.html}">
+                <a class="product-item" href="/login" th:onclick="showLoginAlert()">
                     <img th:src="@{/images/{namaGambar}(namaGambar=${produk.namaGambar})}" class="img-fluid product-thumbnail">
                     <h3 class="product-title" th:text="${produk.nama}">Nordic Chair</h3>
                     <strong class="product-price" th:text="${produk.harga}">$50.00</strong>
-
-                    <span class="icon-cross">
-                        <img th:src="@{/images/cross.svg}" class="img-fluid">
-                    </span>
                 </a>
             </div>
             <!-- End Column 2 -->
@@ -253,6 +249,13 @@
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/tiny-slider.js}"></script>
 <script th:src="@{/js/custom.js}"></script>
+<script th:inline="javascript">
+    function showLoginAlert() {
+        alert("Anda tidak bisa menambahkan ke keranjang karena belum login.");
+        window.location.href = "/login"; // Arahkan pengguna ke halaman login
+        return false; // Mencegah navigasi bawaan
+    }
+</script>
 
 </body>
 

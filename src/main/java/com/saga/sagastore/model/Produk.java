@@ -8,6 +8,7 @@ public class Produk {
     private double harga;
     private int stok;
     private String namaGambar;
+    private int jumlah;
 
     public Produk() {
     }
@@ -67,6 +68,14 @@ public class Produk {
 
     public void setNamaGambar(String namaGambar) {
         this.namaGambar = namaGambar;
+    }
+
+    public int getJumlah() {
+        return jumlah;
+    }
+
+    public void setJumlah(int jumlah) {
+        this.jumlah = jumlah;
     }
 }
 

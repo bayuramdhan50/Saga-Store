@@ -27,13 +27,10 @@
         <div class="row">
             <!-- Start Product Listing -->
             <div th:each="produk : ${produkList}" class="col-12 col-md-4 col-lg-3 mb-5">
-                <a class="product-item" th:href="@{/produk/detail/{id}(id=${produk.id})}">
+                <a class="product-item" th:href="@{/login}" onclick="showLoginAlert()">
                     <img th:src="@{/images/{namaGambar}(namaGambar=${produk.namaGambar})}" class="img-fluid product-thumbnail">
                     <h3 class="product-title" th:text="${produk.nama}">Product Name</h3>
                     <strong class="product-price" th:text="${produk.harga}">Price</strong>
-                    <span class="icon-cross">
-                        <img src="images/cross.svg" class="img-fluid">
-                    </span>
                 </a>
             </div>
             <!-- End Product Listing -->
@@ -47,6 +44,19 @@
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/tiny-slider.js}"></script>
 <script th:src="@{/js/custom.js}"></script>
+<script th:inline="javascript">
+    function showLoginAlert() {
+        alert("Anda tidak bisa menambahkan ke keranjang karena belum login.");
+        window.location.href = "/login"; // Arahkan pengguna ke halaman login
+        return false; // Mencegah navigasi bawaan
+    }
+
+    function showCartAlert() {
+        alert("Anda tidak bisa melihat ke keranjang karena belum login.");
+        window.location.href = "/login"; // Arahkan pengguna ke halaman login
+        return false; // Mencegah navigasi bawaan
+    }
+</script>
 </body>
 
 </html>
