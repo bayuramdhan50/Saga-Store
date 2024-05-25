@@ -1,63 +1,76 @@
-<!doctype html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
+
 <head th:replace="/fragments/head :: head"></head>
-
 <body>
-
 <div th:include="/fragments/header :: header"></div>
 
-<main>
-    <section class="signup">
-        <div class="container">
-            <h2 class="section-title">Daftar</h2>
-            <div class="row">
-                <div class="col-md-6 offset-md-3">
-                    <form th:action="@{/signup}" method="post" th:object="${pengguna}">
-                        <div class="form-group">
-                            <label for="username">Username:</label>
-                            <input type="text" class="form-control" id="username" name="username"
-                                   th:field="*{username}" required>
-                            <span th:if="${#fields.hasErrors('username')}" class="text-danger">
+<script src="assets/static/js/initTheme.js"></script>
+<div id="auth">
+
+    <div class="row h-100">
+        <div class="col-lg-5 col-12">
+            <div id="auth-left">
+                <h1 class="auth-title">Sign Up</h1>
+                <p class="auth-subtitle mb-5">Input your data to register to our website.</p>
+
+                <form th:action="@{/signup}" method="post" th:object="${pengguna}">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" class="form-control" id="username" name="username"
+                               th:field="*{username}" required>
+                        <span th:if="${#fields.hasErrors('username')}" class="text-danger">
                                     <span th:errors="*{username}"></span>
                                 </span>
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Password:</label>
-                            <input type="password" class="form-control" id="password" name="password"
-                                   th:field="*{password}" required>
-                            <span th:if="${#fields.hasErrors('password')}" class="text-danger">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password"
+                               th:field="*{password}" required>
+                        <span th:if="${#fields.hasErrors('password')}" class="text-danger">
                                     <span th:errors="*{password}"></span>
                                 </span>
-                        </div>
-                        <div class="form-group">
-                            <label for="alamat">Alamat:</label>
-                            <input type="text" class="form-control" id="alamat" name="alamat"
-                                   th:field="*{alamat}" required>
-                            <span th:if="${#fields.hasErrors('alamat')}" class="text-danger">
+                    </div>
+                    <div class="form-group">
+                        <label for="alamat">Alamat:</label>
+                        <input type="text" class="form-control" id="alamat" name="alamat"
+                               th:field="*{alamat}" required>
+                        <span th:if="${#fields.hasErrors('alamat')}" class="text-danger">
                                     <span th:errors="*{alamat}"></span>
                                 </span>
-                        </div>
-                        <div class="form-group">
-                            <label for="nomorTelepon">Nomor Telepon:</label>
-                            <input type="text" class="form-control" id="nomorTelepon" name="nomorTelepon"
-                                   th:field="*{nomorTelepon}" required>
-                            <span th:if="${#fields.hasErrors('nomorTelepon')}" class="text-danger">
+                    </div>
+                    <div class="form-group">
+                        <label for="nomorTelepon">Nomor Telepon:</label>
+                        <input type="text" class="form-control" id="nomorTelepon" name="nomorTelepon"
+                               th:field="*{nomorTelepon}" required>
+                        <span th:if="${#fields.hasErrors('nomorTelepon')}" class="text-danger">
                                     <span th:errors="*{nomorTelepon}"></span>
                                 </span>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Daftar</button>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Daftar</button>
                     </form>
+                <div class="text-center mt-5 text-lg fs-4">
+                    <p class='text-gray-600'>Already have an account? <a href="auth-login.html" class="font-bold">Log
+                        in</a>.</p>
                 </div>
             </div>
         </div>
-    </section>
-</main>
+        <div class="col-lg-7 d-none d-lg-block">
+            <div id="auth-right">
 
+            </div>
+        </div>
+    </div>
+
+</div>
 <div th:include="/fragments/footer :: footer"></div>
 
 <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js}"></script>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/tiny-slider.js}"></script>
 <script th:src="@{/js/custom.js}"></script>
+
+
 </body>
+
 </html>
