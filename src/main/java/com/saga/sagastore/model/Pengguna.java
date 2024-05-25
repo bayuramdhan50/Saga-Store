@@ -7,18 +7,20 @@ public class Pengguna {
     private String password;
     private String alamat;
     private String nomorTelepon;
+    private String role;
 
     // Konstruktor tanpa argumen
     public Pengguna() {
     }
 
     // Konstruktor dengan argumen
-    public Pengguna(Long id, String username, String password, String alamat, String nomorTelepon) {
+    public Pengguna(Long id, String username, String password, String alamat, String nomorTelepon, String role) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.alamat = alamat;
         this.nomorTelepon = nomorTelepon;
+        this.role = role;
     }
 
     // Getter dan setter
@@ -60,5 +62,12 @@ public class Pengguna {
 
     public void setNomorTelepon(String nomorTelepon) {
         this.nomorTelepon = nomorTelepon;
+    }
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
