@@ -8,13 +8,19 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -78,7 +84,8 @@ public class AdminController {
     }
 
     @PostMapping("/produk/add")
-    public String addProduct(@ModelAttribute Produk produk, Model model) {
+    public String addProduct(@Validated @ModelAttribute Produk produk, Model model) {
+        // Simpan data produk ke database
         try (Connection connection = ConnectionManager.getConnection()) {
             String sql = "INSERT INTO produk (nama, deskripsi, harga, stok, namaGambar) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -98,12 +105,14 @@ public class AdminController {
                 }
             }
         } catch (SQLException e) {
-            // Tangani kesalahan jika terjadi exception SQL
             e.printStackTrace();
             model.addAttribute("error", "Failed to add product. Please try again later.");
         }
+
         return "redirect:/admin/produk"; // Redirect kembali ke halaman produk setelah berhasil menambahkan produk
     }
+
+
 
     @GetMapping("/produk/editproduk/{id}")
     public String editProductPage(@PathVariable("id") long id, Model model) {
