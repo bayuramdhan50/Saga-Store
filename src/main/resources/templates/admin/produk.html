@@ -142,7 +142,9 @@
                         <td th:text="${produk.deskripsi}"></td>
                         <td th:text="${produk.harga}"></td>
                         <td th:text="${produk.stok}"></td>
-                        <td th:text="${produk.namaGambar}"></td>
+                        <td>
+                            <img th:src="@{'/images/' + ${produk.namaGambar}}" alt="Gambar Produk" width="100">
+                        </td>
                         <td>
                             <div class="row gx-0">
                                 <div class="col-auto">
