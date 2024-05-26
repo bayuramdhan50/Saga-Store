@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import com.saga.sagastore.connection.ConnectionManager;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -179,42 +180,96 @@ public class UserController {
     @GetMapping("/transaksi")
     public String userCheckout(Model model) {
         model.addAttribute("pageTitle", "Transaksi");
-        model.addAttribute("activePage", "Transaksi");
-        return "user/transaksi"; // Ini adalah view name yang harus sesuai dengan file template Anda
+        model.addAttribute("activePage", "Checkout");
+
+        // Ambil data keranjang
+        List<Produk> produkList = new ArrayList<>();
+        double totalHarga = 0;
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(
+                     "SELECT p.id, p.nama, p.deskripsi, p.harga, p.stok, p.namaGambar, ik.jumlah " +
+                             "FROM produk p " +
+                             "JOIN item_keranjang ik ON p.id = ik.produk_id " +
+                             "JOIN keranjang k ON ik.keranjang_id = k.id " +
+                             "WHERE k.id = ?")) {
+            // Ambil ID keranjang dari session
+            Long keranjangId = (Long) request.getSession().getAttribute("keranjangId");
+            if (keranjangId != null) {
+                stmt.setLong(1, keranjangId);
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    Produk produk = new Produk();
+                    produk.setId(rs.getLong("id"));
+                    produk.setNama(rs.getString("nama"));
+                    produk.setDeskripsi(rs.getString("deskripsi"));
+                    produk.setHarga(rs.getDouble("harga"));
+                    produk.setStok(rs.getInt("stok"));
+                    produk.setNamaGambar(rs.getString("namaGambar"));
+                    produk.setJumlah(rs.getInt("jumlah"));
+                    produkList.add(produk);
+                    totalHarga += produk.getHarga() * produk.getJumlah();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        model.addAttribute("produkList", produkList);
+        model.addAttribute("totalHarga", totalHarga);
+        return "user/transaksi";  // Ini adalah view name yang harus sesuai dengan file template Anda
     }
 
     @PostMapping("/transaksi")
-    public String checkout(Model model, HttpServletRequest request) {
-        // Ambil ID keranjang dari session
-        Long keranjangId = (Long) request.getSession().getAttribute("keranjangId");
+    public String checkout(HttpServletRequest request) {
+        try (Connection connection = ConnectionManager.getConnection()) {
+            // Ambil ID keranjang dari session
+            Long keranjangId = (Long) request.getSession().getAttribute("keranjangId");
+            if (keranjangId != null) {
+                // 1. Buat transaksi baru
+                PreparedStatement stmtTransaksi = connection.prepareStatement(
+                        "INSERT INTO transaksi (pengguna_id, tanggalTransaksi, totalHarga, metodePembayaran) VALUES (?, ?, ?, ?)",
+                        Statement.RETURN_GENERATED_KEYS);
+                stmtTransaksi.setLong(1, 1L); // Ganti dengan ID pengguna yang sedang login
+                stmtTransaksi.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+                // Total harga sudah dihitung di userKeranjang
+                stmtTransaksi.setDouble(3, Double.parseDouble(request.getParameter("totalHarga")));
+                stmtTransaksi.setString(4, "Transfer Bank"); // Contoh metode pembayaran
 
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(
-                     "INSERT INTO transaksi (pengguna_id, tanggalTransaksi, totalHarga, metodePembayaran) VALUES (?, ?, ?, ?)")) {
-            // Masukkan ID pengguna dari session
-            stmt.setLong(1, 1L);
-            stmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
-            // Ambil totalHarga dari session atau hitung ulang
-            stmt.setDouble(3, (Double) request.getSession().getAttribute("totalHarga"));
-            stmt.setString(4, "Cash On Delivery"); // Contoh metode pembayaran
+                stmtTransaksi.executeUpdate();
+                ResultSet generatedKeys = stmtTransaksi.getGeneratedKeys();
+                long transaksiId = 0;
+                if (generatedKeys.next()) {
+                    transaksiId = generatedKeys.getLong(1);
+                }
 
-            stmt.executeUpdate();
+                // 2. Simpan item transaksi
+                PreparedStatement stmtItemTransaksi = connection.prepareStatement(
+                        "INSERT INTO item_transaksi (transaksi_id, produk_id, jumlah) SELECT ?, produk_id, jumlah FROM item_keranjang WHERE keranjang_id=?");
+                stmtItemTransaksi.setLong(1, transaksiId);
+                stmtItemTransaksi.setLong(2, keranjangId);
+                stmtItemTransaksi.executeUpdate();
 
-            // Hapus item dari keranjang (opsional)
-//            stmt = connection.prepareStatement("DELETE FROM item_keranjang WHERE keranjang_id=?");
-//            stmt.setLong(1, keranjangId);
-//            stmt.executeUpdate();
+                // 3. Hapus item dari keranjang
+                PreparedStatement stmtHapusKeranjang = connection.prepareStatement(
+                        "DELETE FROM item_keranjang WHERE keranjang_id=?");
+                stmtHapusKeranjang.setLong(1, keranjangId);
+                stmtHapusKeranjang.executeUpdate();
 
-            // Hapus keranjang dari session (opsional)
-            request.getSession().removeAttribute("keranjangId");
+                // 4. Hapus keranjang (opsional)
+                 PreparedStatement stmtHapusItemKeranjang = connection.prepareStatement("DELETE FROM keranjang WHERE id=?");
+                 stmtHapusItemKeranjang.setLong(1, keranjangId);
+                 stmtHapusItemKeranjang.executeUpdate();
 
-            // Redirect ke halaman konfirmasi atau halaman lain yang sesuai
-            return "redirect:/";
+                request.getSession().removeAttribute("keranjangId"); // Hapus session keranjang
+
+                // 5. Arahkan ke halaman konfirmasi atau halaman lain yang sesuai
+                return "redirect:/user/thankyou"; // Arahkan ke halaman utama
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            // Redirect ke halaman error
             return "error";
         }
+        return "redirect:/user/keranjang";
     }
 
     //    SERVICES
