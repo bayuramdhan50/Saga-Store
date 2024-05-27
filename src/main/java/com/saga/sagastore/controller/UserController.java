@@ -1,6 +1,7 @@
 package com.saga.sagastore.controller;
 
 import com.saga.sagastore.model.Pengguna;
+import com.saga.sagastore.model.Produk;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +10,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import com.saga.sagastore.connection.ConnectionManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/user")
@@ -22,10 +24,31 @@ public class UserController {
 
     @GetMapping("/home")
     public String userIndex(Model model) {
+        List<Produk> produkList = new ArrayList<>();
+        try (Connection connection = ConnectionManager.getConnection();
+             Statement stmt = connection.createStatement()) {
+            ResultSet rs = stmt.executeQuery("SELECT * FROM produk");
+            while (rs.next()) {
+                Produk produk = new Produk();
+                produk.setId(rs.getLong("id"));
+                produk.setNama(rs.getString("nama"));
+                produk.setDeskripsi(rs.getString("deskripsi"));
+                produk.setHarga(rs.getDouble("harga"));
+                produk.setStok(rs.getInt("stok"));
+                produk.setNamaGambar(rs.getString("namaGambar"));
+                produkList.add(produk);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle error (misalnya, redirect ke halaman error)
+        }
         model.addAttribute("pageTitle", "Home");
+        model.addAttribute("produkList", produkList);
         model.addAttribute("activePage", "Home");
         return "user/index"; // Ini adalah view name yang harus sesuai dengan file template Anda
     }
+
+    //    ABOUT
 
     @GetMapping("/about")
     public String userAbout(Model model) {
@@ -34,19 +57,222 @@ public class UserController {
         return "user/about"; // Ini adalah view name yang harus sesuai dengan file template Anda
     }
 
+    //    KERANJANG
+
     @GetMapping("/keranjang")
-    public String userKeranjang(Model model) {
+    public String userKeranjang(Model model, HttpServletRequest request) {
         model.addAttribute("pageTitle", "Keranjang");
         model.addAttribute("activePage", "Keranjang");
-        return "user/keranjang"; // Ini adalah view name yang harus sesuai dengan file template Anda
+
+        List<Produk> produkList = new ArrayList<>();
+        double totalHarga = 0;
+        try (Connection connection = ConnectionManager.getConnection()) {
+            // Ambil ID keranjang dari session
+            Long keranjangId = (Long) request.getSession().getAttribute("keranjangId");
+            if (keranjangId != null) {
+                PreparedStatement stmt = connection.prepareStatement(
+                        "SELECT p.id, p.nama, p.deskripsi, p.harga, p.stok, p.namaGambar, ik.jumlah " +
+                                "FROM produk p " +
+                                "JOIN item_keranjang ik ON p.id = ik.produk_id " +
+                                "JOIN keranjang k ON ik.keranjang_id = k.id " +
+                                "WHERE k.id = ?");
+                stmt.setLong(1, keranjangId);
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    Produk produk = new Produk();
+                    produk.setId(rs.getLong("id"));
+                    produk.setNama(rs.getString("nama"));
+                    produk.setDeskripsi(rs.getString("deskripsi"));
+                    produk.setHarga(rs.getDouble("harga"));
+                    produk.setStok(rs.getInt("stok"));
+                    produk.setNamaGambar(rs.getString("namaGambar"));
+                    produk.setJumlah(rs.getInt("jumlah")); //  Mengambil jumlah dari item_keranjang
+                    produkList.add(produk);
+                    totalHarga += produk.getHarga() * produk.getJumlah();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        model.addAttribute("produkList", produkList);
+        model.addAttribute("totalHarga", totalHarga);
+        return "user/keranjang";
     }
+
+    @PostMapping("/keranjang/add/{id}")
+    public String addToCart(@PathVariable Long id, HttpServletRequest request) {
+        try (Connection connection = ConnectionManager.getConnection()) {
+            // Ambil ID keranjang dari session (asumsi Anda sudah memiliki mekanisme session)
+            Long keranjangId = (Long) request.getSession().getAttribute("keranjangId");
+            if (keranjangId == null) {
+                // Jika belum ada keranjang, buat keranjang baru dan simpan ID-nya di session
+                PreparedStatement stmt = connection.prepareStatement(
+                        "INSERT INTO keranjang (pengguna_id) VALUES (?)",
+                        Statement.RETURN_GENERATED_KEYS);
+                // Masukkan ID pengguna ke sini
+                stmt.setLong(1, 1L); // Contoh, masukkan ID pengguna dari session
+                stmt.executeUpdate();
+                ResultSet generatedKeys = stmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    keranjangId = generatedKeys.getLong(1);
+                    request.getSession().setAttribute("keranjangId", keranjangId);
+                }
+            }
+
+            // Tambahkan item ke keranjang
+            PreparedStatement stmt = connection.prepareStatement(
+                    "INSERT INTO item_keranjang (keranjang_id, produk_id, jumlah) VALUES (?, ?, ?)");
+            stmt.setLong(1, keranjangId);
+            stmt.setLong(2, id);
+            stmt.setInt(3, 1); // Asumsi jumlah default adalah 1
+            stmt.executeUpdate();
+
+            return "redirect:/user/produk"; // Arahkan ke halaman produk
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "error";
+        }
+    }
+
+    @PostMapping("/keranjang/update/{id}")
+    @ResponseBody
+    public String updateQuantity(@PathVariable Long id, @RequestParam("quantity") int quantity, HttpServletRequest request) {
+        try (Connection connection = ConnectionManager.getConnection()) {
+            // Ambil ID keranjang dari session
+            Long keranjangId = (Long) request.getSession().getAttribute("keranjangId");
+            if (keranjangId != null) {
+                PreparedStatement stmt = connection.prepareStatement(
+                        "UPDATE item_keranjang SET jumlah=? WHERE produk_id=? AND keranjang_id=?");
+                stmt.setInt(1, quantity);
+                stmt.setLong(2, id);
+                stmt.setLong(3, keranjangId);
+                stmt.executeUpdate();
+                return "OK";
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "ERROR";
+    }
+
+    @GetMapping("/keranjang/remove/{id}")
+    @ResponseBody
+    public String removeItemFromCart(@PathVariable Long id, HttpServletRequest request) {
+        try (Connection connection = ConnectionManager.getConnection()) {
+            Long keranjangId = (Long) request.getSession().getAttribute("keranjangId");
+            if (keranjangId != null) {
+                PreparedStatement stmt = connection.prepareStatement(
+                        "DELETE FROM item_keranjang WHERE produk_id=? AND keranjang_id=?");
+                stmt.setLong(1, id);
+                stmt.setLong(2, keranjangId);
+                stmt.executeUpdate();
+                return "OK";
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "ERROR";
+    }
+
+    //    TRANSAKSI
 
     @GetMapping("/transaksi")
     public String userCheckout(Model model) {
         model.addAttribute("pageTitle", "Transaksi");
-        model.addAttribute("activePage", "Transaksi");
-        return "user/transaksi"; // Ini adalah view name yang harus sesuai dengan file template Anda
+        model.addAttribute("activePage", "Checkout");
+
+        // Ambil data keranjang
+        List<Produk> produkList = new ArrayList<>();
+        double totalHarga = 0;
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(
+                     "SELECT p.id, p.nama, p.deskripsi, p.harga, p.stok, p.namaGambar, ik.jumlah " +
+                             "FROM produk p " +
+                             "JOIN item_keranjang ik ON p.id = ik.produk_id " +
+                             "JOIN keranjang k ON ik.keranjang_id = k.id " +
+                             "WHERE k.id = ?")) {
+            // Ambil ID keranjang dari session
+            Long keranjangId = (Long) request.getSession().getAttribute("keranjangId");
+            if (keranjangId != null) {
+                stmt.setLong(1, keranjangId);
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    Produk produk = new Produk();
+                    produk.setId(rs.getLong("id"));
+                    produk.setNama(rs.getString("nama"));
+                    produk.setDeskripsi(rs.getString("deskripsi"));
+                    produk.setHarga(rs.getDouble("harga"));
+                    produk.setStok(rs.getInt("stok"));
+                    produk.setNamaGambar(rs.getString("namaGambar"));
+                    produk.setJumlah(rs.getInt("jumlah"));
+                    produkList.add(produk);
+                    totalHarga += produk.getHarga() * produk.getJumlah();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        model.addAttribute("produkList", produkList);
+        model.addAttribute("totalHarga", totalHarga);
+        return "user/transaksi";  // Ini adalah view name yang harus sesuai dengan file template Anda
     }
+
+    @PostMapping("/transaksi")
+    public String checkout(HttpServletRequest request) {
+        try (Connection connection = ConnectionManager.getConnection()) {
+            // Ambil ID keranjang dari session
+            Long keranjangId = (Long) request.getSession().getAttribute("keranjangId");
+            if (keranjangId != null) {
+                // 1. Buat transaksi baru
+                PreparedStatement stmtTransaksi = connection.prepareStatement(
+                        "INSERT INTO transaksi (pengguna_id, tanggalTransaksi, totalHarga, metodePembayaran) VALUES (?, ?, ?, ?)",
+                        Statement.RETURN_GENERATED_KEYS);
+                stmtTransaksi.setLong(1, 1L); // Ganti dengan ID pengguna yang sedang login
+                stmtTransaksi.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+                // Total harga sudah dihitung di userKeranjang
+                stmtTransaksi.setDouble(3, Double.parseDouble(request.getParameter("totalHarga")));
+                stmtTransaksi.setString(4, "Transfer Bank"); // Contoh metode pembayaran
+
+                stmtTransaksi.executeUpdate();
+                ResultSet generatedKeys = stmtTransaksi.getGeneratedKeys();
+                long transaksiId = 0;
+                if (generatedKeys.next()) {
+                    transaksiId = generatedKeys.getLong(1);
+                }
+
+                // 2. Simpan item transaksi
+                PreparedStatement stmtItemTransaksi = connection.prepareStatement(
+                        "INSERT INTO item_transaksi (transaksi_id, produk_id, jumlah) SELECT ?, produk_id, jumlah FROM item_keranjang WHERE keranjang_id=?");
+                stmtItemTransaksi.setLong(1, transaksiId);
+                stmtItemTransaksi.setLong(2, keranjangId);
+                stmtItemTransaksi.executeUpdate();
+
+                // 3. Hapus item dari keranjang
+                PreparedStatement stmtHapusKeranjang = connection.prepareStatement(
+                        "DELETE FROM item_keranjang WHERE keranjang_id=?");
+                stmtHapusKeranjang.setLong(1, keranjangId);
+                stmtHapusKeranjang.executeUpdate();
+
+                // 4. Hapus keranjang (opsional)
+                 PreparedStatement stmtHapusItemKeranjang = connection.prepareStatement("DELETE FROM keranjang WHERE id=?");
+                 stmtHapusItemKeranjang.setLong(1, keranjangId);
+                 stmtHapusItemKeranjang.executeUpdate();
+
+                request.getSession().removeAttribute("keranjangId"); // Hapus session keranjang
+
+                // 5. Arahkan ke halaman konfirmasi atau halaman lain yang sesuai
+                return "redirect:/user/thankyou"; // Arahkan ke halaman utama
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "error";
+        }
+        return "redirect:/user/keranjang";
+    }
+
+    //    SERVICES
 
     @GetMapping("/services")
     public String userServices(Model model) {
@@ -55,14 +281,35 @@ public class UserController {
         return "user/services"; // Ini adalah view name yang harus sesuai dengan file template Anda
     }
 
+    //    PRODUCT
+
     @GetMapping("/produk")
     public String userProduct(Model model) {
+        List<Produk> produkList = new ArrayList<>();
+        try (Connection connection = ConnectionManager.getConnection();
+             Statement stmt = connection.createStatement()) {
+            ResultSet rs = stmt.executeQuery("SELECT * FROM produk");
+            while (rs.next()) {
+                Produk produk = new Produk();
+                produk.setId(rs.getLong("id"));
+                produk.setNama(rs.getString("nama"));
+                produk.setDeskripsi(rs.getString("deskripsi"));
+                produk.setHarga(rs.getDouble("harga"));
+                produk.setStok(rs.getInt("stok"));
+                produk.setNamaGambar(rs.getString("namaGambar"));
+                produkList.add(produk);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle error (misalnya, redirect ke halaman error)
+        }
         model.addAttribute("pageTitle", "Product");
+        model.addAttribute("produkList", produkList);
         model.addAttribute("activePage", "Product");
         return "user/produk"; // Ini adalah view name yang harus sesuai dengan file template Anda
     }
 
-//    PROFILE
+    //    PROFILE
 
     @GetMapping("/profile")
     public String userProfile(Model model) {
@@ -120,6 +367,13 @@ public class UserController {
         // Redirect kembali ke halaman profil setelah berhasil memperbarui
         model.addAttribute("success", "Profile updated successfully");
         return "user/profile";
+    }
+
+    @GetMapping("/thankyou")
+    public String userThankyou(Model model) {
+        model.addAttribute("pageTitle", "Thank You");
+        model.addAttribute("activePage", "Thank You");
+        return "user/thankyou"; // Ini adalah view name yang harus sesuai dengan file template Anda
     }
 
 }

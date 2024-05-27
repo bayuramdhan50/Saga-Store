@@ -16,7 +16,6 @@
                 </div>
             </div>
             <div class="col-lg-7">
-
             </div>
         </div>
     </div>
@@ -28,7 +27,7 @@
         <div class="row mb-5">
             <form class="col-md-12" method="post">
                 <div class="site-blocks-table">
-                    <table class="table">
+                    <table class="table" id="keranjang-table">
                         <thead>
                         <tr>
                             <th class="product-thumbnail">Image</th>
@@ -40,50 +39,30 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
+                        <tr th:each="produk : ${produkList}" th:id="'item-row-' + ${produk.id}">
                             <td class="product-thumbnail">
-                                <img th:src="@{/images/product-1.png}" alt="Image" class="img-fluid">
+                                <img th:src="@{/images/{namaGambar}(namaGambar=${produk.namaGambar})}" alt="Image" class="img-fluid">
                             </td>
                             <td class="product-name">
-                                <h2 class="h5 text-black">Product 1</h2>
+                                <h2 class="h5 text-black" th:text="${produk.nama}">Product 1</h2>
                             </td>
-                            <td>$49.00</td>
+                            <td th:text="${produk.harga}">$49.00</td>
                             <td>
                                 <div class="input-group mb-3 d-flex align-items-center quantity-container" style="max-width: 120px;">
                                     <div class="input-group-prepend">
-                                        <button class="btn btn-outline-black decrease" type="button">&minus;</button>
+                                        <button class="btn btn-outline-black decrease" type="button" th:id="'decrease-' + ${produk.id}">−</button>
                                     </div>
-                                    <input type="text" class="form-control text-center quantity-amount" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                                    <input type="text" class="form-control text-center quantity-amount" th:value="${produk.jumlah}" min="1"
+                                           th:id="'quantity-' + ${produk.id}"
+                                           th:data-produk-id="${produk.id}" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-black increase" type="button">&plus;</button>
+                                        <button class="btn btn-outline-black increase" type="button" th:id="'increase-' + ${produk.id}">+</button>
                                     </div>
                                 </div>
                             </td>
-                            <td>$49.00</td>
-                            <td><a href="#" class="btn btn-black btn-sm">X</a></td>
-                        </tr>
-
-                        <tr>
-                            <td class="product-thumbnail">
-                                <img th:src="@{/images/product-2.png}" alt="Image" class="img-fluid">
-                            </td>
-                            <td class="product-name">
-                                <h2 class="h5 text-black">Product 2</h2>
-                            </td>
-                            <td>$49.00</td>
-                            <td>
-                                <div class="input-group mb-3 d-flex align-items-center quantity-container" style="max-width: 120px;">
-                                    <div class="input-group-prepend">
-                                        <button class="btn btn-outline-black decrease" type="button">&minus;</button>
-                                    </div>
-                                    <input type="text" class="form-control text-center quantity-amount" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-black increase" type="button">&plus;</button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>$49.00</td>
-                            <td><a href="#" class="btn btn-black btn-sm">X</a></td>
+                            <td th:id="'total-' + ${produk.id}" th:text="${produk.harga * produk.jumlah}" th:data-harga="${produk.harga}">$49.00</td>
+                            <td th:id="'remove-' + ${produk.id}"
+                                th:data-produk-id="${produk.id}" ><a href="#" class="btn btn-black btn-sm">X</a></td>
                         </tr>
                         </tbody>
                     </table>
@@ -98,7 +77,11 @@
                         <button class="btn btn-black btn-sm btn-block">Update Cart</button>
                     </div>
                     <div class="col-md-6">
-                        <button class="btn btn-outline-black btn-sm btn-block">Continue Shopping</button>
+                        <form action="/user/produk" method="get">
+                            <button class="btn btn-outline-black btn-sm btn-block">
+                                Continue Shopping
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -115,7 +98,7 @@
                                 <span class="text-black">Subtotal</span>
                             </div>
                             <div class="col-md-6 text-right">
-                                <strong class="text-black">$230.00</strong>
+                                <strong class="text-black" th:text="${totalHarga}">Total Harga</strong>
                             </div>
                         </div>
                         <div class="row mb-5">
@@ -123,13 +106,16 @@
                                 <span class="text-black">Total</span>
                             </div>
                             <div class="col-md-6 text-right">
-                                <strong class="text-black">$230.00</strong>
+                                <strong class="text-black" th:text="${totalHarga}">Total Harga</strong>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-12">
-                                <button class="btn btn-black btn-lg py-3 btn-block" onclick="window.location='/transaksi'">Proceed To Checkout</button>
+                                <form action="/user/transaksi" method="get">
+                                    <input type="hidden" name="totalHarga" th:value="${totalHarga}">
+                                    <button class="btn btn-black btn-lg py-3 btn-block">Proceed To Checkout</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -145,5 +131,99 @@
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/tiny-slider.js}"></script>
 <script th:src="@{/js/custom.js}"></script>
+<script>
+    // JavaScript for quantity buttons and remove item
+    document.addEventListener('DOMContentLoaded', function() {
+        const quantityContainers = document.querySelectorAll('.quantity-container');
+        const removeForms = document.querySelectorAll('.remove-form');
+
+        quantityContainers.forEach(container => {
+            const decreaseButton = container.querySelector('.decrease');
+            const increaseButton = container.querySelector('.increase');
+            const quantityInput = container.querySelector('.quantity-amount');
+            const productId = quantityInput.dataset.produkId;
+            const totalElement = document.getElementById('total-' + productId);
+
+            decreaseButton.addEventListener('click', () => {
+                let quantity = parseInt(quantityInput.value);
+                if (quantity > 1) {
+                    quantity--;
+                    updateQuantity(productId, quantity);
+                    totalElement.textContent = quantity * parseInt(totalElement.dataset.harga);
+                    updateTotalHarga();
+                }
+            });
+
+            increaseButton.addEventListener('click', () => {
+                let quantity = parseInt(quantityInput.value);
+                quantity++;
+                updateQuantity(productId, quantity);
+                totalElement.textContent = quantity * parseInt(totalElement.dataset.harga);
+                updateTotalHarga();
+            });
+        });
+
+        removeForms.forEach(form => {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const productId = form.querySelector('.remove-item').dataset.produkId;
+                removeItemFromCart(productId, form);
+            });
+        });
+    });
+
+    function updateQuantity(productId, quantity) {
+        // AJAX untuk update quantity di database
+        $.ajax({
+            url: '/user/keranjang/update/' + productId,
+            type: 'POST',
+            data: {
+                quantity: quantity
+            },
+            success: function(response) {
+                // Update jumlah dan total di HTML
+                const quantityElement = document.getElementById('quantity-' + productId);
+                quantityElement.value = quantity;
+                const totalElement = document.getElementById('total-' + productId);
+                totalElement.textContent = quantity * parseInt(totalElement.dataset.harga);
+                updateTotalHarga();
+            },
+            error: function(xhr, status, error) {
+                console.error('Error updating quantity:', error);
+            }
+        });
+    }
+
+    function removeItemFromCart(productId, form) {
+        $.ajax({
+            url: '/keranjang/remove/' + productId,
+            type: 'POST',
+            data: {_method: 'DELETE'},
+            success: function(response) {
+                if (response === 'OK') {
+                    const itemRow = document.getElementById('item-row-' + productId);
+                    if (itemRow) {
+                        itemRow.remove();
+                    }
+                    updateTotalHarga();
+                } else {
+                    console.error('Error removing item: response not OK');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error removing item:', error);
+            }
+        });
+    }
+
+    function updateTotalHarga() {
+        let total = 0;
+        const totalElements = document.querySelectorAll('td[id^="total-"]');
+        totalElements.forEach(totalElement => {
+            total += parseInt(totalElement.textContent);
+        });
+        document.querySelector('.total-harga').textContent = total;
+    }
+</script>
 </body>
 </html>

@@ -28,116 +28,19 @@
         <div class="row">
 
             <!-- Start Column 1 -->
-            <div class="col-12 col-md-4 col-lg-3 mb-5">
-                <a class="product-item" href="#">
-                    <img th:src="@{/images/product-3.png}" class="img-fluid product-thumbnail" alt="Product Image">
-                    <h3 class="product-title">Nordic Chair</h3>
-                    <strong class="product-price">$50.00</strong>
-
+            <div th:each="produk : ${produkList}" class="col-12 col-md-4 col-lg-3 mb-5">
+                <form th:action="@{/user/keranjang/add/{id}(id=${produk.id})}" method="post" class="add-to-cart">
+                <a class="product-item">
+                    <img th:src="@{/images/{namaGambar}(namaGambar=${produk.namaGambar})}" class="img-fluid product-thumbnail">
+                    <h3 class="product-title" th:text="${produk.nama}">Product Name</h3>
+                    <strong class="product-price" th:text="${produk.harga}">Price</strong>
                     <span class="icon-cross">
                         <img th:src="@{/images/cross.svg}" class="img-fluid" alt="Cross Icon">
                     </span>
                 </a>
+                </form>
             </div>
             <!-- End Column 1 -->
-
-            <!-- Start Column 2 -->
-            <div class="col-12 col-md-4 col-lg-3 mb-5">
-                <a class="product-item" href="#">
-                    <img th:src="@{/images/product-1.png}" class="img-fluid product-thumbnail" alt="Product Image">
-                    <h3 class="product-title">Nordic Chair</h3>
-                    <strong class="product-price">$50.00</strong>
-
-                    <span class="icon-cross">
-                        <img th:src="@{/images/cross.svg}" class="img-fluid" alt="Cross Icon">
-                    </span>
-                </a>
-            </div>
-            <!-- End Column 2 -->
-
-            <!-- Start Column 3 -->
-            <div class="col-12 col-md-4 col-lg-3 mb-5">
-                <a class="product-item" href="#">
-                    <img th:src="@{/images/product-2.png}" class="img-fluid product-thumbnail" alt="Product Image">
-                    <h3 class="product-title">Kruzo Aero Chair</h3>
-                    <strong class="product-price">$78.00</strong>
-
-                    <span class="icon-cross">
-                        <img th:src="@{/images/cross.svg}" class="img-fluid" alt="Cross Icon">
-                    </span>
-                </a>
-            </div>
-            <!-- End Column 3 -->
-
-            <!-- Start Column 4 -->
-            <div class="col-12 col-md-4 col-lg-3 mb-5">
-                <a class="product-item" href="#">
-                    <img th:src="@{/images/product-3.png}" class="img-fluid product-thumbnail" alt="Product Image">
-                    <h3 class="product-title">Ergonomic Chair</h3>
-                    <strong class="product-price">$43.00</strong>
-
-                    <span class="icon-cross">
-                        <img th:src="@{/images/cross.svg}" class="img-fluid" alt="Cross Icon">
-                    </span>
-                </a>
-            </div>
-            <!-- End Column 4 -->
-
-            <!-- Start Column 1 -->
-            <div class="col-12 col-md-4 col-lg-3 mb-5">
-                <a class="product-item" href="#">
-                    <img th:src="@{/images/product-3.png}" class="img-fluid product-thumbnail" alt="Product Image">
-                    <h3 class="product-title">Nordic Chair</h3>
-                    <strong class="product-price">$50.00</strong>
-
-                    <span class="icon-cross">
-                        <img th:src="@{/images/cross.svg}" class="img-fluid" alt="Cross Icon">
-                    </span>
-                </a>
-            </div>
-            <!-- End Column 1 -->
-
-            <!-- Start Column 2 -->
-            <div class="col-12 col-md-4 col-lg-3 mb-5">
-                <a class="product-item" href="#">
-                    <img th:src="@{/images/product-1.png}" class="img-fluid product-thumbnail" alt="Product Image">
-                    <h3 class="product-title">Nordic Chair</h3>
-                    <strong class="product-price">$50.00</strong>
-
-                    <span class="icon-cross">
-                        <img th:src="@{/images/cross.svg}" class="img-fluid" alt="Cross Icon">
-                    </span>
-                </a>
-            </div>
-            <!-- End Column 2 -->
-
-            <!-- Start Column 3 -->
-            <div class="col-12 col-md-4 col-lg-3 mb-5">
-                <a class="product-item" href="#">
-                    <img th:src="@{/images/product-2.png}" class="img-fluid product-thumbnail" alt="Product Image">
-                    <h3 class="product-title">Kruzo Aero Chair</h3>
-                    <strong class="product-price">$78.00</strong>
-
-                    <span class="icon-cross">
-                        <img th:src="@{/images/cross.svg}" class="img-fluid" alt="Cross Icon">
-                    </span>
-                </a>
-            </div>
-            <!-- End Column 3 -->
-
-            <!-- Start Column 4 -->
-            <div class="col-12 col-md-4 col-lg-3 mb-5">
-                <a class="product-item" href="#">
-                    <img th:src="@{/images/product-3.png}" class="img-fluid product-thumbnail" alt="Product Image">
-                    <h3 class="product-title">Ergonomic Chair</h3>
-                    <strong class="product-price">$43.00</strong>
-
-                    <span class="icon-cross">
-                        <img th:src="@{/images/cross.svg}" class="img-fluid" alt="Cross Icon">
-                    </span>
-                </a>
-            </div>
-            <!-- End Column 4 -->
 
         </div>
     </div>
@@ -149,6 +52,22 @@
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/tiny-slider.js}"></script>
 <script th:src="@{/js/custom.js}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const iconCrosses = document.querySelectorAll('.icon-cross');
+
+        iconCrosses.forEach(iconCross => {
+            iconCross.addEventListener('click', function(event) {
+                // Cari form yang terkait dengan ikon "cross"
+                const form = event.target.closest('form.add-to-cart');
+                if (form) {
+                    // Kirim form
+                    form.submit();
+                }
+            });
+        });
+    });
+</script>
 </body>
 
 </html>
